@@ -334,26 +334,26 @@ export default function Home() {
         { opacity: 0, scale: 0.8, y: 20, rotation: 0 },
         { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.5)", delay: 0.2 }
       )
-      // 第一步：先往右側倒至 30 度
-      .to(buttonRef.current, {
-        rotation: 30,
-        duration: 0.15,
-        ease: "sine.inOut"
-      })
-      // 第二步：像蹺蹺板一樣在 30 度到 -30 度之間劇烈搖擺 3 秒鐘
-      .to(buttonRef.current, {
-        rotation: -30,
-        duration: 0.3,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: 9 // 共 10 次搖擺（3 秒）
-      })
-      // 第三步：自動收回正中央
-      .to(buttonRef.current, {
-        rotation: 0,
-        duration: 0.15,
-        ease: "sine.inOut"
-      });
+        // 第一步：先往右側倒至 30 度
+        .to(buttonRef.current, {
+          rotation: 30,
+          duration: 0.15,
+          ease: "sine.inOut"
+        })
+        // 第二步：像蹺蹺板一樣在 30 度到 -30 度之間劇烈搖擺 3 秒鐘
+        .to(buttonRef.current, {
+          rotation: -30,
+          duration: 0.3,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: 9 // 共 10 次搖擺（3 秒）
+        })
+        // 第三步：自動收回正中央
+        .to(buttonRef.current, {
+          rotation: 0,
+          duration: 0.15,
+          ease: "sine.inOut"
+        });
     }
   }, [status]);
 
@@ -363,12 +363,33 @@ export default function Home() {
   return (
     <main
       ref={containerRef}
-      className="relative flex h-screen w-full flex-col md:flex-row items-center justify-center overflow-hidden bg-sky-100 text-slate-800"
+      className="relative flex h-screen w-full flex-col md:flex-row items-center justify-start md:justify-center overflow-hidden bg-sky-100 text-slate-800"
     >
+      {/* ── 品牌 Logo（桌機：absolute 左上角；手機：在地圖上方正常排版）── */}
+      <div className="hidden md:flex absolute top-8 left-10 z-50 items-center gap-3 select-none pointer-events-none">
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 shadow-lg shadow-blue-500/30">
+          <Plane className="w-6 h-6 text-white -rotate-12" />
+        </div>
+        <span className="text-3xl font-black tracking-[0.15em] text-slate-800 drop-shadow-sm">
+          去哪玩
+        </span>
+      </div>
 
       {/* ── 左側：地圖區塊 ─────────────────────────────────── */}
-      <div className="relative w-full md:w-1/2 h-[55vh] md:h-screen flex items-center justify-center z-0">
-        <div className="relative w-full max-w-[420px] aspect-[2/3] drop-shadow-2xl rounded-[2rem] overflow-hidden bg-sky-200">
+      <div className="relative w-full md:w-1/2 md:h-screen flex flex-col items-center justify-start md:justify-center z-0">
+
+        {/* 手機版 Logo（正常排版，不疊加地圖） */}
+        <div
+          className="md:hidden flex items-center gap-3 self-start px-6 pb-3 select-none"
+          style={{ paddingTop: "max(env(safe-area-inset-top), 12px)" }}
+        >
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 shadow-lg shadow-blue-500/30">
+            <Plane className="w-6 h-6 text-white -rotate-12" />
+          </div>
+          <span className="text-2xl font-black tracking-[0.15em] text-slate-800 drop-shadow-sm">去哪玩</span>
+        </div>
+
+        <div className="relative w-full max-w-[420px] aspect-[2/3] drop-shadow-2xl overflow-hidden bg-sky-200 md:mt-16 max-h-[calc(100svh-80px)] md:max-h-none">
 
           {/* 水彩插畫風格台灣地圖底圖 */}
           <img
@@ -446,22 +467,27 @@ export default function Home() {
       </div>
 
       {/* ── 右側：互動區塊 ─────────────────────────────────── */}
-      <div className="relative w-full md:w-1/2 h-[45vh] md:h-screen flex flex-col items-center justify-center z-10 px-6">
+      <div className="relative w-full md:w-1/2 md:h-screen flex flex-col items-center justify-center z-10 px-6 py-6">
 
-        {/* 初始按鈕 - 高質感 3D 擬真按鈕設計 */}
+        {/* 初始按鈕 - 手機版固定底部；桌機版正常排版 */}
         {status === "idle" && (
-          <button
-            ref={buttonRef}
-            onClick={handlePlay}
-            className="group relative flex items-center justify-center rounded-full bg-gradient-to-b from-sky-400 to-blue-600 px-16 py-6 text-4xl font-black tracking-[0.1EM] text-white shadow-[0_20px_50px_-10px_rgba(37,99,235,0.7),inset_0_4px_0_rgba(255,255,255,0.4)] border-b-[8px] border-blue-800 transition-all hover:brightness-110 active:border-b-0 active:mt-[8px] active:shadow-[0_10px_20px_-10px_rgba(37,99,235,0.8)]"
+          <div
+            className="fixed md:relative bottom-0 md:bottom-auto left-0 right-0 md:left-auto md:right-auto z-20 md:z-auto flex items-center justify-center pb-10 md:pb-0"
+            style={{ paddingBottom: "max(env(safe-area-inset-bottom), 40px)" }}
           >
-            <span className="drop-shadow-lg">去哪玩</span>
-            
-            {/* 右上角的飛機小徽章設計提升 */}
-            <span className="absolute -right-4 -top-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-yellow-300 to-amber-500 rotate-12 text-yellow-950 shadow-[0_10px_20px_-5px_rgba(245,158,11,0.6),inset_0_3px_0_rgba(255,255,255,0.7)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[24deg]">
-              <Plane className="w-7 h-7 fill-current drop-shadow-sm" />
-            </span>
-          </button>
+            <button
+              ref={buttonRef}
+              onClick={handlePlay}
+              className="group relative flex items-center justify-center rounded-full bg-gradient-to-b from-sky-400 to-blue-600 px-12 py-4 text-3xl font-black tracking-[0.1EM] text-white shadow-[0_15px_40px_-10px_rgba(37,99,235,0.7),inset_0_4px_0_rgba(255,255,255,0.4)] border-b-[6px] border-blue-800 transition-all hover:brightness-110 active:border-b-0 active:mt-[6px] active:shadow-[0_10px_20px_-10px_rgba(37,99,235,0.8)]"
+            >
+              <span className="drop-shadow-lg">去哪玩</span>
+
+              {/* 右上角的飛機小徽章設計提升 */}
+              <span className="absolute -right-3 -top-5 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-yellow-300 to-amber-500 rotate-12 text-yellow-950 shadow-[0_8px_15px_-5px_rgba(245,158,11,0.6),inset_0_3px_0_rgba(255,255,255,0.7)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[24deg]">
+                <Plane className="w-6 h-6 fill-current drop-shadow-sm" />
+              </span>
+            </button>
+          </div>
         )}
 
         {/* 飛行中提示 */}
@@ -475,7 +501,17 @@ export default function Home() {
         {status === "result" && selectedCity && (
           <div
             ref={resultRef}
-            className="w-full max-w-md opacity-0 bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl shadow-slate-300/60 border border-white p-7 pb-[100px] flex flex-col gap-5"
+            className="
+              opacity-0 flex flex-col gap-5 p-6
+              bg-white/95 backdrop-blur-md border border-white
+              shadow-2xl shadow-slate-400/40
+              overflow-y-auto
+              rounded-t-3xl md:rounded-3xl
+              fixed md:relative bottom-0 md:bottom-auto left-0 md:left-auto right-0 md:right-auto
+              z-30 md:z-auto
+              max-h-[70vh] md:max-h-none
+              w-full md:max-w-md
+            "
           >
             {/* 標題 */}
             <div className="text-center">
